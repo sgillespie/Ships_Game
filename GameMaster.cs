@@ -33,38 +33,45 @@ public class GameMaster : MonoBehaviour
         movesShip1 = boats[0].moves;
         movesShip2 = boats[1].moves;
         moveNum = 0;
-       
-    }
-    void Update()
-    {
-        if (playerTurn == 3)
-        {
 
-            if (moveNum <= 3)
+        StartCoroutine(LoopTurns());
+    }
+
+    IEnumerator LoopTurns() {
+        while (true) {
+            if (playerTurn == 3)
             {
-                if(Vector2.Distance(boats[0].transform.position, boats[0].pos) == 0f &&
-                    Vector2.Distance(boats[1].transform.position, boats[1].pos) == 0.0f &&
-                    boats[0].transform.rotation == Quaternion.Euler(0, 0, boats[0].degree) &&
-                    boats[1].transform.rotation == Quaternion.Euler(0, 0, boats[1].degree))
+
+                if (moveNum <= 3)
                 {
-                    ResolveMoves(moveNum);
-                    ResolveShots(moveNum);
-                    moveNum += 1;
-                }
+                    if(Vector2.Distance(boats[0].transform.position, boats[0].pos) == 0f &&
+                       Vector2.Distance(boats[1].transform.position, boats[1].pos) == 0.0f &&
+                       boats[0].transform.rotation == Quaternion.Euler(0, 0, boats[0].degree) &&
+                       boats[1].transform.rotation == Quaternion.Euler(0, 0, boats[1].degree))
+                    {
+                        ResolveMoves(moveNum);
+                        ResolveShots(moveNum);
+                        moveNum += 1;
+                    }
                 
+                }
+                else
+                {
+                    moveNum = 0; // 3 Moves complete, we end the turn and reset
+                    EndTurn();
+                    yield return new WaitForSeconds(1f);
+                }            
             }
             else
             {
-                moveNum = 0;
-                EndTurn();
-            }            
-        }
-        else
-        {
-            if (Input.GetKeyDown(KeyCode.Return))
-            {
-                EndTurn();
+                if (Input.GetKeyDown(KeyCode.Return))
+                {
+                    EndTurn();
+                    yield return new WaitForSeconds(1f);
+                }
             }
+
+            yield return null;
         }
     }
 
